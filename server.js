@@ -3,7 +3,13 @@ import cors from "cors"
 import bodyParser from "body-parser";
 import lyricsFinder from "lyrics-finder"
 import SpotifyWebApi from "spotify-web-api-node"
-import songController from "./controllers/song-controller.js"
+import songController from "./controllers/likedSongs/song-controller.js"
+import mongoose from "mongoose";
+
+// const CONNECTION_STRING = 'mongodb://localhost:27017/songs'
+const CONNECTION_STRING = "mongodb+srv://saurabh7998:MyTuiterDb7998!@cluster0.wivmu9n.mongodb.net/?retryWrites=true&w=majority"
+
+mongoose.connect(CONNECTION_STRING);
 
 const app = express()
 app.use(cors())
