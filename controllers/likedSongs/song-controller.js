@@ -8,9 +8,9 @@ const songController = (app) => {
 }
 
 const likeSong = async (req, res) => {
-    console.log("reached server!!!")
     const track = req.body
-    likedSongArr.push(track)
+    likedSongArr.push(track.album.id)
+    console.log(likedSongArr)
     res.json(track)
 }
 
