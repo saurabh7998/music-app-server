@@ -1,6 +1,6 @@
 import * as userDao from './users-dao.js'
 
-let currentUser = null
+// let currentUser = null
 
 const UsersController = (app) => {
 
