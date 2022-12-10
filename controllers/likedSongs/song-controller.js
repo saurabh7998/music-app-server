@@ -10,7 +10,9 @@ const songController = (app) => {
 
 const likeSong = async (req, res) => {
     const track = req.body
-    const id = track.album.id;
+    const uri = track.uri
+    const albumId = track.album.id
+    const id = uri.substring(14)
     const smallestAlbumImage = track.album.images.reduce(
         (smallest, image) => {
             if (image.height < smallest.height) {
@@ -23,18 +25,18 @@ const likeSong = async (req, res) => {
 
     const artist = track.artists[0].name
     const title = track.name
-    const uri = track.uri
     const albumUrl = smallestAlbumImage.url
 
     const likedTrack = {
         'trackId': id,
+        'albumId': albumId,
         'artist': artist,
         'title': title,
         'uri': uri,
         'albumUrl': albumUrl,
     }
 
-    console.log(likedTrack)
+    // console.log(likedTrack)
     const likesSong = await likedSongDao.createLikedSong(likedTrack)
 }
 

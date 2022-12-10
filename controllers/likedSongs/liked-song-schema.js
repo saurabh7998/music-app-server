@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const schema = mongoose.Schema({
                                    trackId: String,
+                                   albumId: String,
                                    artist: String,
                                    title: String,
                                    uri: String,
