@@ -5,6 +5,9 @@ import lyricsFinder from "lyrics-finder"
 import SpotifyWebApi from "spotify-web-api-node"
 import songController from "./controllers/likedSongs/song-controller.js"
 import mongoose from "mongoose";
+import usersController from "./users/users-controller.js";
+import session from 'express-session'
+import SessionController from "./session-controller.js";
 
 // const CONNECTION_STRING = 'mongodb://localhost:27017/songs'
 const CONNECTION_STRING = "mongodb+srv://saurabh7998:MyTuiterDb7998!@cluster0.wivmu9n.mongodb.net/?retryWrites=true&w=majority"
@@ -12,12 +15,23 @@ const CONNECTION_STRING = "mongodb+srv://saurabh7998:MyTuiterDb7998!@cluster0.wi
 mongoose.connect(CONNECTION_STRING);
 
 const app = express()
-app.use(cors())
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:3000'
+}))
+app.use(session({
+    secret: 'should be an environment variable',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}))
+app.use(express.json())
 
 
 songController(app)
+usersController(app)
+SessionController(app)
+
 
 app.post("/refresh", (req, res) => {
     const refreshToken = req.body.refreshToken
