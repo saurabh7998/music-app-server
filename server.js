@@ -8,84 +8,79 @@ import mongoose from "mongoose";
 import usersController from "./users/users-controller.js";
 import session from 'express-session'
 import SessionController from "./session-controller.js";
+import request from 'request'
+
+const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000,
+    autoIndex: false,
+    maxPoolSize: 10,
+    socketTimeoutMS: 45000,
+    family: 4
+}
 
 // const CONNECTION_STRING = 'mongodb://localhost:27017/songs'
 const CONNECTION_STRING = "mongodb+srv://saurabh7998:MyTuiterDb7998!@cluster0.wivmu9n.mongodb.net/?retryWrites=true&w=majority"
 
-mongoose.connect(CONNECTION_STRING);
-
-
+mongoose.connect(CONNECTION_STRING, options);
 
 const app = express()
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+
 app.use(cors({
-    credentials: true,
-    origin: 'http://localhost:3000'
-}))
+                 credentials: true,
+                 origin: 'http://localhost:3000'
+             }))
 app.use(session({
-    secret: 'should be an environment variable',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
-}))
+                    secret: 'should be an environment variable',
+                    resave: false,
+                    saveUninitialized: true,
+                    cookie: {secure: false}
+                }))
 app.use(express.json())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: true}))
 
+const client_id = 'bb235ac85acd4799bac266127f244d7f';
+const client_secret = 'f90c5e786138486693a7387946739c3f';
 
-songController(app)
-usersController(app)
-SessionController(app)
+app.post("/authenticate", (req, res) => {
+    const authOptions = {
+        url: 'https://accounts.spotify.com/api/token',
+        headers: {
+            'Authorization': 'Basic ' + (new Buffer(
+                             client_id + ':' + client_secret).toString(
+                'base64'))
+        },
+        form: {
+            grant_type: 'client_credentials'
+        },
+        json: true
+    };
 
-app.post("/refresh", (req, res) => {
-    const refreshToken = req.body.refreshToken
-    const spotifyApi = new SpotifyWebApi({
-        redirectUri: 'http://localhost:3000',
-        clientId: 'bb235ac85acd4799bac266127f244d7f',
-        clientSecret: 'f90c5e786138486693a7387946739c3f',
-        refreshToken,
-    })
-
-    spotifyApi
-        .refreshAccessToken()
-        .then(data => {
+    request.post(authOptions, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            const token = body.access_token;
+            // res.json({
+            //              accessToken: token
+            //          })
             res.json({
-                accessToken: data.body.accessToken,
-                expiresIn: data.body.expiresIn,
-            })
-        })
-        .catch(err => {
-            console.log(err)
-            res.sendStatus(400)
-        })
-})
-
-app.post("/login", (req, res) => {
-    const code = req.body.code
-    const spotifyApi = new SpotifyWebApi({
-        redirectUri: 'http://localhost:3000',
-        clientId: 'bb235ac85acd4799bac266127f244d7f',
-        clientSecret: 'f90c5e786138486693a7387946739c3f',
-    })
-
-    spotifyApi
-        .authorizationCodeGrant(code)
-        .then(data => {
-            res.json({
-                accessToken: data.body.access_token,
-                refreshToken: data.body.refresh_token,
-                expiresIn: data.body.expires_in,
-            })
-        })
-        .catch(err => {
-            res.sendStatus(400)
-        })
+                'token': token
+                     })
+        }
+    });
 })
 
 app.get("/lyrics", async (req, res) => {
     const lyrics =
-        (await lyricsFinder(req.query.artist, req.query.track)) || "No Lyrics Found"
-    res.json({ lyrics })
+        (await lyricsFinder(req.query.artist, req.query.track))
+        || "No Lyrics Found"
+    res.json({lyrics})
 })
+
+usersController(app)
+SessionController(app)
+songController(app)
 
 app.listen(4000)
 
