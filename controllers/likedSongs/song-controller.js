@@ -6,7 +6,16 @@ let likedSongArr = likedSongs
 const songController = (app) => {
     app.post('/api/like', likeSong)
     app.get('/api/like/:uid', getLikedSongs)
+    app.delete('/api/like/:uid/:tid',deleteSong)
 }
+
+const deleteSong = async (req, res) => {
+    const id = req.params.tid
+    const user = req.params.uid
+    const dislikeSong = await likedSongDao.deleteLikedSong(user,id)
+    res.json(dislikeSong);
+}
+
 
 const likeSong = async (req, res) => {
     const track = req.body
