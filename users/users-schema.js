@@ -10,7 +10,6 @@ const usersSchema = mongoose.Schema({
     dob: String,
     address: String,
     role: {type: String, enum: ['ADMIN','USER']},
-    //likedSongs: {type: String, enum: ['ADMIN','USER']}
 }, {collection: 'users'})
 
 export default usersSchema
