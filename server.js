@@ -9,6 +9,7 @@ import usersController from "./users/users-controller.js";
 import session from 'express-session'
 import SessionController from "./session-controller.js";
 import request from 'request'
+import followsController from "./controllers/follows/follows-controller.js";
 
 const options = {
     useNewUrlParser: true,
@@ -81,6 +82,7 @@ app.get("/lyrics", async (req, res) => {
 usersController(app)
 SessionController(app)
 songController(app)
+followsController(app)
 
 app.listen(4000)
 

@@ -43,7 +43,7 @@ const register = async (req, res) => {
         return
     }
     const currentUser = await userDao.createUser(user)
-    console.log(currentUser)
+    // console.log(currentUser)
     req.session['currentUser'] = currentUser
     res.json(currentUser)
 }
