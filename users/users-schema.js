@@ -9,7 +9,7 @@ const usersSchema = mongoose.Schema({
     lastName: String,
     dob: String,
     address: String,
-    role: {type: String, enum: ['ADMIN','USER']},
+    admin: Boolean,
     //likedSongs: {type: String, enum: ['ADMIN','USER']}
 }, {collection: 'users'})
 
