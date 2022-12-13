@@ -22,9 +22,16 @@ const createUser = async (req, res) => {
     const actualUser = await userDao.createUser(newUser)
     res.json(actualUser)
 }
-const updateUser = () => {
+const updateUser = async (req,res) => {
+    const uid = req.params.uid
+    const userUpdates = req.body
+    const user = await userDao.updateUser(uid, userUpdates)
+    res.json(user)
 }
-const deleteUser = () => {
+const deleteUser = async (req, res) => {
+    const uid = req.params.uid
+    await userDao.deleteUser(uid)
+    res.sendStatus(200)
 }
 
 const register = async (req, res) => {
