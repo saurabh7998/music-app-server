@@ -11,7 +11,6 @@ const usersSchema = mongoose.Schema({
     address: String,
     admin: Boolean,
     //likedSongs: {type: String, enum: ['ADMIN','USER']}
-    role: {type: String, enum: ['ADMIN','USER']},
 }, {collection: 'users'})
 
 export default usersSchema
